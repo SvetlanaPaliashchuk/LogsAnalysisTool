@@ -31,6 +31,6 @@ public class Application {
 
 
         Controller con = new Controller();
-        System.out.println(con.executeTask("GET_LOGS_BY_MESSAGE_PATTERN,,some text"));
+        System.out.println(con.executeTask("GET_LOGS_BY_TIME_PERIOD,,2020-01-01 00:00:00,2020-06-28 00:00:00"));
     }
 }

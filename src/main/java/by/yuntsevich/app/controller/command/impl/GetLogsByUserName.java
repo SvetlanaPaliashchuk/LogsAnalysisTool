@@ -32,9 +32,7 @@ public class GetLogsByUserName implements Command {
                 response.append("\n");
             }
         }catch(ServiceException e){
-            //return some message
-
-            throw new ServiceException(e);
+            return response.append(e.getMessage()).toString();
         }
         return response.toString();
     }

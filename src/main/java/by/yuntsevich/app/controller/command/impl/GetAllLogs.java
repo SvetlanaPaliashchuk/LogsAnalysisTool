@@ -26,7 +26,6 @@ public class GetAllLogs implements Command {
             }
         }catch(ServiceException e){
             //return some message
-
             throw new ServiceException(e);
         }
         return response.toString();

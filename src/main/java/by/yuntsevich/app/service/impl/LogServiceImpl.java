@@ -8,6 +8,8 @@ import by.yuntsevich.app.service.LogService;
 import by.yuntsevich.app.service.ServiceException;
 import by.yuntsevich.app.service.util.LogParser;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,8 +61,30 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public List<LogRecord> getLogsByTimePeriod(String fileName, String timePeriod) throws ServiceException {
-        return null;
+    public List<LogRecord> getLogsByTimePeriod(String fileName, String startDate, String endDate) throws ServiceException {
+        List<LogRecord> logRecords;
+        try {
+            logRecords = getLogsList(fileName)
+                    .stream()
+                    .filter(line -> isIncludedInRange(line, startDate, endDate))
+                    .collect(Collectors.toList());
+            logDao.writeResultToFile(convertToResultList(logRecords));
+        } catch (DAOException e) {
+            throw new ServiceException("Could not write the list of logs", e);
+        }
+        catch (DateTimeParseException e) {
+            throw new ServiceException("Could not parse specified date", e);
+        }
+        return logRecords;
+    }
+
+    private boolean isIncludedInRange(LogRecord logRecord, String startDate, String endDate) {
+        LogParser lp = new LogParser();
+        LocalDateTime startPeriod = lp.parseDateTime(startDate);
+        LocalDateTime endPeriod = lp.parseDateTime(endDate);
+        return ((logRecord.getDateTime().isAfter(startPeriod) && logRecord.getDateTime().isBefore(endPeriod)) ||
+                logRecord.getDateTime().equals(startPeriod) ||
+                logRecord.getDateTime().equals(endPeriod));
     }
 
     @Override

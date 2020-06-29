@@ -8,7 +8,7 @@ import by.yuntsevich.app.service.ServiceFactory;
 
 import java.util.List;
 
-public class GetLogsByMessagePattern implements Command {
+public class GetLogsByTimePeriod implements Command {
     @Override
     public String execute(String request) throws ServiceException {
         List<LogRecord> list;
@@ -19,10 +19,16 @@ public class GetLogsByMessagePattern implements Command {
 
         String[] parts = request.split(",");
         String fileName = parts[1];
-        String pattern = parts[2];
+        String startDate = parts[2];
+        String endDate = parts[3];
+
         try{
-            list = logService.getLogsByMessagePattern(fileName, pattern);
-            response.append("List of logs by message pattern:\n");
+            list = logService.getLogsByTimePeriod(fileName, startDate, endDate);
+            response.append("List of logs by time period from: ")
+                    .append(startDate)
+                    .append(" to ")
+                    .append(endDate)
+                    .append("\n");
             for (LogRecord logRecord : list) {
                 response.append(logRecord.getUserName());
                 response.append(";");
@@ -32,9 +38,8 @@ public class GetLogsByMessagePattern implements Command {
                 response.append("\n");
             }
         }catch(ServiceException e){
-            return response.append(e.getMessage()).toString();
+           return response.append(e.getMessage()).toString();
         }
         return response.toString();
     }
 }
-
