@@ -1,17 +1,11 @@
 package by.yuntsevich.app.view;
 
 import by.yuntsevich.app.controller.Controller;
-import by.yuntsevich.app.dao.DAOException;
-import by.yuntsevich.app.dao.impl.LogDaoImpl;
-import by.yuntsevich.app.entity.LogRecord;
+import by.yuntsevich.app.dao.DaoException;
 import by.yuntsevich.app.service.ServiceException;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Application {
-    public static void main(String[] args) throws DAOException, ServiceException {
+    public static void main(String[] args) throws DaoException, ServiceException {
 //        LogDaoImpl ldi = new LogDaoImpl();
 //        List<String> list = ldi.getLogsFromFile();
 //

@@ -1,6 +1,6 @@
 package by.yuntsevich.app.dao.impl;
 
-import by.yuntsevich.app.dao.DAOException;
+import by.yuntsevich.app.dao.DaoException;
 import by.yuntsevich.app.dao.LogDao;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,19 +16,19 @@ public class LogDaoImpl implements LogDao {
     private static final String OUTPUT_FILE_PATH = "output/result.csv";
 
     @Override
-    public List<String> getLogsFromFile(String fileName) throws DAOException {
+    public List<String> getLogsFromFile(String fileName) throws DaoException {
         List<String> logsList;
         try {
             logsList = Files.lines(Paths.get(LOGS_DIRECTORY + fileName))
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new DAOException("Could not read logs from the file", e);
+            throw new DaoException("Could not read logs from the file", e);
         }
         return logsList;
     }
 
     @Override
-    public List<String> getLogsFromDirectory() throws DAOException {
+    public List<String> getLogsFromDirectory() throws DaoException {
         List<String> logsList = new ArrayList<>();
         List<String> filesInDirectory;
         try {
@@ -42,13 +42,13 @@ public class LogDaoImpl implements LogDao {
                 logsList.addAll(logsListInFile);
             }
         } catch (IOException e) {
-            throw new DAOException("Could not read files from the directory", e);
+            throw new DaoException("Could not read files from the directory", e);
         }
         return logsList;
     }
 
     @Override
-    public void writeResultToFile(List<String> result) throws DAOException {
+    public void writeResultToFile(List<String> result) throws DaoException {
         try {
             if (Files.notExists(Paths.get(OUTPUT_FILE_PATH))) {
                 Files.createFile(Paths.get(OUTPUT_FILE_PATH));
@@ -56,7 +56,7 @@ public class LogDaoImpl implements LogDao {
 
         Files.write(Paths.get(OUTPUT_FILE_PATH), result, StandardOpenOption.APPEND);
         } catch (IOException e) {
-            throw new DAOException("Problem in writing to the file", e);
+            throw new DaoException("Problem in writing to the file", e);
         }
     }
 

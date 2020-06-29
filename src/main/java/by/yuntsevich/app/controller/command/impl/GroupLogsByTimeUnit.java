@@ -1,33 +1,30 @@
 package by.yuntsevich.app.controller.command.impl;
 
 import by.yuntsevich.app.controller.command.Command;
-import by.yuntsevich.app.entity.LogsTimeUnit;
-import by.yuntsevich.app.service.LogService;
+import by.yuntsevich.app.service.LogGrouper;
 import by.yuntsevich.app.service.ServiceException;
 import by.yuntsevich.app.service.ServiceFactory;
-import java.time.temporal.ChronoUnit;
 
 import java.util.List;
 
 public class GroupLogsByTimeUnit implements Command {
+    private static final String DELIMITER = ",";
+
     @Override
     public String execute(String request) {
         List<String> list;
         StringBuilder response = new StringBuilder();
 
         ServiceFactory serviceFactory = ServiceFactory.getInstance();
-        LogService logService = serviceFactory.getLogService();
+        LogGrouper logGrouper = serviceFactory.getLogGrouper();
 
-        String[] parts = request.split(",");
-
+        String[] parts = request.split(DELIMITER);
         String fileName = parts[1];
-        String timeUnit = LogsTimeUnit.valueOf(parts[2]).toString();
-
-
+        String timeUnit = parts[2];
 
         try {
-            list = logService.groupLogsByTimeUnit(fileName, timeUnit);
-            response.append("Grouped logs by time unit:\n");
+            list = logGrouper.groupLogsByTimeUnit(fileName, timeUnit);
+            response.append("Grouped logs by ").append(timeUnit).append(":\n");
             response.append("Time unit");
             response.append("              ");
             response.append("Count of logs");

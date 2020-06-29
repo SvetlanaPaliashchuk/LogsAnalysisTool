@@ -1,28 +1,27 @@
 package by.yuntsevich.app.controller.command.impl;
 
 import by.yuntsevich.app.controller.command.Command;
-import by.yuntsevich.app.entity.LogRecord;
-import by.yuntsevich.app.service.LogService;
+import by.yuntsevich.app.service.LogGrouper;
 import by.yuntsevich.app.service.ServiceException;
 import by.yuntsevich.app.service.ServiceFactory;
 
-import java.text.Format;
 import java.util.List;
-import java.util.Map;
 
 public class GroupLogsByUserName implements Command {
+    private static final String DELIMITER = ",";
+
     @Override
     public String execute(String request) {
         List<String> list;
         StringBuilder response = new StringBuilder();
 
         ServiceFactory serviceFactory = ServiceFactory.getInstance();
-        LogService logService = serviceFactory.getLogService();
+        LogGrouper logGrouper = serviceFactory.getLogGrouper();
 
-        String[] parts = request.split(",");
+        String[] parts = request.split(DELIMITER);
         String fileName = parts[1];
         try {
-            list = logService.groupLogsByUserName(fileName);
+            list = logGrouper.groupLogsByUserName(fileName);
             response.append("Grouped logs by username:\n");
             response.append("Username");
             response.append("      ");

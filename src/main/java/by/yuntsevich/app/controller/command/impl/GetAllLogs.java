@@ -10,23 +10,22 @@ import java.util.List;
 
 public class GetAllLogs implements Command {
     @Override
-    public String execute(String request) throws ServiceException {
+    public String execute(String request) {
         List<LogRecord> list;
         StringBuilder response = new StringBuilder();
 
         ServiceFactory serviceFactory = ServiceFactory.getInstance();
         LogService logService = serviceFactory.getLogService();
 
-        try{
+        try {
             list = logService.getLogsList(request);
             response.append("List of logs:\n");
             for (LogRecord logRecord : list) {
                 response.append(logRecord);
                 response.append("\n");
             }
-        }catch(ServiceException e){
-            //return some message
-            throw new ServiceException(e);
+        } catch (ServiceException e) {
+            return response.append(e.getMessage()).toString();
         }
         return response.toString();
     }
