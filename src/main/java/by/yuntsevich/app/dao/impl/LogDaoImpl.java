@@ -22,7 +22,7 @@ public class LogDaoImpl implements LogDao {
             logsList = Files.lines(Paths.get(LOGS_DIRECTORY + fileName))
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new DAOException(e);
+            throw new DAOException("Could not read logs from the file", e);
         }
         return logsList;
     }
@@ -36,13 +36,13 @@ public class LogDaoImpl implements LogDao {
                     .filter(Files::isRegularFile)
                     .map(Path::toString)
                     .collect(Collectors.toList());
-            for (String s : filesInDirectory) {
-                List<String> logsListInFile = Files.lines(Paths.get(s))
+            for (String path : filesInDirectory) {
+                List<String> logsListInFile = Files.lines(Paths.get(path))
                         .collect(Collectors.toList());
                 logsList.addAll(logsListInFile);
             }
         } catch (IOException e) {
-            throw new DAOException(e);
+            throw new DAOException("Could not read files from the directory", e);
         }
         return logsList;
     }
@@ -56,7 +56,7 @@ public class LogDaoImpl implements LogDao {
 
         Files.write(Paths.get(OUTPUT_FILE_PATH), result, StandardOpenOption.APPEND);
         } catch (IOException e) {
-            throw new DAOException(e);
+            throw new DAOException("Problem in writing to the file", e);
         }
     }
 

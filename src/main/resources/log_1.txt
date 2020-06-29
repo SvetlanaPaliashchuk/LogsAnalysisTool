@@ -1,1 +1,0 @@
-LogRecord(dateTime=2020-06-26T12:35:36.955, userName=user1, message=message)

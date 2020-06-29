@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LogServiceImpl implements LogService {
@@ -23,7 +24,7 @@ public class LogServiceImpl implements LogService {
     public List<LogRecord> getLogsList(String fileName) throws ServiceException {
         List<LogRecord> logRecords;
         LogParser lp = new LogParser();
-        if (!fileName.equals("")) {
+        if (!fileName.equals("dir")) {
             try {
                 logRecords = lp.createLogRecordList(logDao.getLogsFromFile(fileName));
                 if (logRecords == null) {
@@ -46,6 +47,8 @@ public class LogServiceImpl implements LogService {
         return logRecords;
     }
 
+
+    //filter methods
     @Override
     public List<LogRecord> getLogsByUserName(String fileName, String userName) throws ServiceException {
         List<LogRecord> logRecords = getLogsList(fileName).stream()
@@ -78,6 +81,7 @@ public class LogServiceImpl implements LogService {
         return logRecords;
     }
 
+    //check if the date is in the specified range
     private boolean isIncludedInRange(LogRecord logRecord, String startDate, String endDate) {
         LogParser lp = new LogParser();
         LocalDateTime startPeriod = lp.parseDateTime(startDate);
@@ -111,5 +115,27 @@ public class LogServiceImpl implements LogService {
         result.add("----------------------------------------------");
         return result;
     }
+
+
+    //grouping methods
+
+
+    @Override
+    public List<String> groupLogsByUserName(String fileName) throws ServiceException {
+        Map<String, Long> resultMap = getLogsList(fileName).stream()
+                .collect(Collectors.groupingBy(LogRecord::getUserName, Collectors.counting()));
+        List<String> result = new ArrayList<>();
+
+        for (Map.Entry entry : resultMap.entrySet()) {
+            result.add(entry.getKey().toString() + "      " + entry.getValue().toString());
+        }
+        try {
+            logDao.writeResultToFile(result);
+        } catch (DAOException e) {
+            throw new ServiceException("Could not write the list of logs", e);
+        }
+        return result;
+    }
+
 
 }
