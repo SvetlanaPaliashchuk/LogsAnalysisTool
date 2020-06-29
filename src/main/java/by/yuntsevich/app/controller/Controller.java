@@ -7,7 +7,7 @@ public final class Controller {
     private final CommandProvider provider = new CommandProvider();
     private static final String paramDelimiter = ",";
 
-    public String executeTask(String request) throws ServiceException {
+    public String executeTask(String request)  {
         String commandName;
         Command executionCommand;
 

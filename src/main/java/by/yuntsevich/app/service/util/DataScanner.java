@@ -1,11 +1,11 @@
-package by.yuntsevich.app;
+package by.yuntsevich.app.service.util;
 
 import java.util.Scanner;
 
 public class DataScanner {
     public static int enterIntFromConsole() {
         Scanner sc = new Scanner(System.in);
-        int number = 0;
+        int number;
         while (!sc.hasNextInt()){
             sc.next();
         }
@@ -23,7 +23,7 @@ public class DataScanner {
 
     public static double enterDoubleFromConsole() {
         Scanner sc = new Scanner(System.in);
-        double number = 0.0;
+        double number;
         while (!sc.hasNextDouble()){
             sc.next();
         }
@@ -34,7 +34,7 @@ public class DataScanner {
 
     public static String enterLineFromConsole() {
         Scanner sc = new Scanner(System.in);
-        String line = "";
+        String line;
         while (!sc.hasNextLine()){
             sc.next();
         }

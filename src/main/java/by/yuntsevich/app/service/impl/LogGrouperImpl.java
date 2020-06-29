@@ -31,13 +31,13 @@ public class LogGrouperImpl  implements LogGrouper {
         for (Map.Entry entry : resultMap.entrySet()) {
             result.add(entry.getKey().toString() + "      " + entry.getValue().toString());
         }
+        result.add("----------------------------------------------");
+
         try {
             logDao.writeResultToFile(result);
         } catch (DaoException e) {
             throw new ServiceException("Could not write the list of logs", e);
         }
-        result.add("----------------------------------------------");
-
         return result;
     }
 

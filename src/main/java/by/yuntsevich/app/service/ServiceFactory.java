@@ -10,7 +10,7 @@ public class ServiceFactory {
     private static final LogService LOG_SERVICE_INSTANCE = new LogServiceImpl();
     private static final LogFilter LOG_FILTER_INSTANCE = new LogFilterImpl();
     private static final LogGrouper LOG_GROUPER_INSTANCE = new LogGrouperImpl();
-    
+
     private ServiceFactory() {}
 
     public static ServiceFactory getInstance() {
