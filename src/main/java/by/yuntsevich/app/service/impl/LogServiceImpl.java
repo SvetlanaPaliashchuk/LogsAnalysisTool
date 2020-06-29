@@ -65,9 +65,15 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public List<LogRecord> getLogsByMessagePattern(String fileName, String pattern) throws ServiceException {
-        return getLogsList(fileName).stream()
+        List<LogRecord> logRecords = getLogsList(fileName).stream()
                 .filter(item -> item.getMessage().matches(pattern))
                 .collect(Collectors.toList());
+        try {
+            logDao.writeResultToFile(convertToResultList(logRecords));
+        } catch (DAOException e) {
+            throw new ServiceException("Could not write the list of logs", e);
+        }
+        return logRecords;
     }
 
 
@@ -78,7 +84,6 @@ public class LogServiceImpl implements LogService {
                     + logRecord.getDateTime().toString() + ";"
                     + logRecord.getMessage());
         }
-        result.add("\n");
         result.add("----------------------------------------------");
         return result;
     }

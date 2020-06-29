@@ -2,8 +2,6 @@ package by.yuntsevich.app.dao.impl;
 
 import by.yuntsevich.app.dao.DAOException;
 import by.yuntsevich.app.dao.LogDao;
-
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

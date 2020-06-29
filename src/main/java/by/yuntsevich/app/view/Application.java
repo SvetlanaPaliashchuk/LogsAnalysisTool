@@ -31,6 +31,6 @@ public class Application {
 
 
         Controller con = new Controller();
-        System.out.println(con.executeTask("GET_LOGS_BY_USERNAME,,user2"));
+        System.out.println(con.executeTask("GET_LOGS_BY_MESSAGE_PATTERN,,some text"));
     }
 }

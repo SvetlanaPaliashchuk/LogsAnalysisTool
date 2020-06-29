@@ -3,6 +3,7 @@ package by.yuntsevich.app.controller;
 import by.yuntsevich.app.controller.command.Command;
 import by.yuntsevich.app.controller.command.CommandName;
 import by.yuntsevich.app.controller.command.impl.GetAllLogs;
+import by.yuntsevich.app.controller.command.impl.GetLogsByMessagePattern;
 import by.yuntsevich.app.controller.command.impl.GetLogsByUserName;
 
 import java.util.HashMap;
@@ -14,6 +15,7 @@ final class CommandProvider {
     CommandProvider(){
         repository.put(CommandName.GET_ALL_LOGS, new GetAllLogs());
         repository.put(CommandName.GET_LOGS_BY_USERNAME, new GetLogsByUserName());
+        repository.put(CommandName.GET_LOGS_BY_MESSAGE_PATTERN, new GetLogsByMessagePattern());
     }
 
     Command getCommand(String name){
