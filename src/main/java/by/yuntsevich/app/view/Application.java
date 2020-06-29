@@ -31,6 +31,6 @@ public class Application {
 
 
         Controller con = new Controller();
-        System.out.println(con.executeTask("GROUP_LOGS_BY_USERNAME,dir"));
+        System.out.println(con.executeTask("GROUP_LOGS_BY_TIME_UNIT,dir,YEAR"));
     }
 }

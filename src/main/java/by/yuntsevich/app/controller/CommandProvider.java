@@ -16,6 +16,7 @@ final class CommandProvider {
         repository.put(CommandName.GET_LOGS_BY_MESSAGE_PATTERN, new GetLogsByMessagePattern());
         repository.put(CommandName.GET_LOGS_BY_TIME_PERIOD, new GetLogsByTimePeriod());
         repository.put(CommandName.GROUP_LOGS_BY_USERNAME, new GroupLogsByUserName());
+        repository.put(CommandName.GROUP_LOGS_BY_TIME_UNIT, new GroupLogsByTimeUnit());
     }
 
     Command getCommand(String name){

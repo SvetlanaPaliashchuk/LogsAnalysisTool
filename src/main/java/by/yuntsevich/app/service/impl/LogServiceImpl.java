@@ -4,12 +4,15 @@ import by.yuntsevich.app.dao.DAOException;
 import by.yuntsevich.app.dao.DaoFactory;
 import by.yuntsevich.app.dao.LogDao;
 import by.yuntsevich.app.entity.LogRecord;
+import by.yuntsevich.app.entity.LogsTimeUnit;
 import by.yuntsevich.app.service.LogService;
 import by.yuntsevich.app.service.ServiceException;
 import by.yuntsevich.app.service.util.LogParser;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.UnsupportedTemporalTypeException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -74,8 +77,7 @@ public class LogServiceImpl implements LogService {
             logDao.writeResultToFile(convertToResultList(logRecords));
         } catch (DAOException e) {
             throw new ServiceException("Could not write the list of logs", e);
-        }
-        catch (DateTimeParseException e) {
+        } catch (DateTimeParseException e) {
             throw new ServiceException("Could not parse specified date", e);
         }
         return logRecords;
@@ -118,8 +120,6 @@ public class LogServiceImpl implements LogService {
 
 
     //grouping methods
-
-
     @Override
     public List<String> groupLogsByUserName(String fileName) throws ServiceException {
         Map<String, Long> resultMap = getLogsList(fileName).stream()
@@ -134,8 +134,57 @@ public class LogServiceImpl implements LogService {
         } catch (DAOException e) {
             throw new ServiceException("Could not write the list of logs", e);
         }
+        result.add("----------------------------------------------");
+
         return result;
     }
 
+    @Override
+    public List<String> groupLogsByTimeUnit(String fileName, String timeUnit) throws ServiceException {
+        List<LogRecord> logsList = setTruncatedDate(fileName, timeUnit);
+        Map<LocalDateTime, Long> resultMap = logsList.stream()
+                .collect(Collectors.groupingBy(e ->
+                        LocalDateTime.from(e.getDateTime()), Collectors.counting())
+                );
+
+        List<String> result = new ArrayList<>();
+        for (Map.Entry entry : resultMap.entrySet()) {
+            result.add(entry.getKey().toString() + "              " + entry.getValue().toString());
+        }
+        result.add("----------------------------------------------");
+
+        try {
+            logDao.writeResultToFile(result);
+        } catch (DAOException e) {
+            throw new ServiceException("Could not write the list of logs", e);
+        }
+        return result;
+    }
+
+    private List<LogRecord> setTruncatedDate(String fileName, String timeUnit) throws ServiceException {
+        LocalDateTime date;
+        List<LogRecord> logsList = getLogsList(fileName);
+
+        for (LogRecord log : logsList) {
+            switch (timeUnit) {
+                case "HOUR":
+                    date = log.getDateTime().truncatedTo(ChronoUnit.HOURS);
+                    break;
+                case "DAY":
+                    date = log.getDateTime().truncatedTo(ChronoUnit.DAYS);
+                    break;
+                case "MONTH":
+                    date = log.getDateTime().truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1);
+                    break;
+                case "YEAR":
+                    date = log.getDateTime().truncatedTo(ChronoUnit.DAYS).withDayOfYear(1);
+                    break;
+                default:
+                    date = null;
+            }
+            log.setDateTime(date);
+        }
+        return logsList;
+    }
 
 }
