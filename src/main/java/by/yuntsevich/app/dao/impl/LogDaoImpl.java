@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,7 +52,11 @@ public class LogDaoImpl implements LogDao {
     @Override
     public void writeResultToFile(List<String> result) throws DAOException {
         try {
-            Files.write(Paths.get(OUTPUT_FILE_PATH), result);
+            if (Files.notExists(Paths.get(OUTPUT_FILE_PATH))) {
+                Files.createFile(Paths.get(OUTPUT_FILE_PATH));
+            }
+
+        Files.write(Paths.get(OUTPUT_FILE_PATH), result, StandardOpenOption.APPEND);
         } catch (IOException e) {
             throw new DAOException(e);
         }

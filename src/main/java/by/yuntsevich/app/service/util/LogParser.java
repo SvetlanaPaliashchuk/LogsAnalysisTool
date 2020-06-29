@@ -45,8 +45,6 @@ public class LogParser {
 
     private LogRecord buildLogRecord (String[] parts){
         LogRecord logRecord = new LogRecord();
-        //System.out.println(parts[0]);
-
         logRecord.setDateTime(parseDateTime(parts[0]));
         logRecord.setUserName(parts[1]);
         logRecord.setMessage(parts[2]);

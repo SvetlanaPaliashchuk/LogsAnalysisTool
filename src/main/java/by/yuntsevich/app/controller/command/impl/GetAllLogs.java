@@ -17,8 +17,6 @@ public class GetAllLogs implements Command {
         ServiceFactory serviceFactory = ServiceFactory.getInstance();
         LogService logService = serviceFactory.getLogService();
 
-
-
         try{
             list = logService.getLogsList(request);
             response.append("List of logs:\n");

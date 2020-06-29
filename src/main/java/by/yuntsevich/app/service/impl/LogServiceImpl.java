@@ -50,7 +50,7 @@ public class LogServiceImpl implements LogService {
                 .filter(item -> userName.equals(item.getUserName()))
                 .collect(Collectors.toList());
         try {
-            logDao.writeResultToFile(convertList(logRecords));
+            logDao.writeResultToFile(convertToResultList(logRecords));
         } catch (DAOException e) {
             throw new ServiceException("Could not write the list of logs", e);
         }
@@ -71,13 +71,15 @@ public class LogServiceImpl implements LogService {
     }
 
 
-    private List<String> convertList(List<LogRecord> logRecords) {
+    private List<String> convertToResultList(List<LogRecord> logRecords) {
         List<String> result = new ArrayList<>();
         for (LogRecord logRecord : logRecords) {
             result.add(logRecord.getUserName() + ";"
                     + logRecord.getDateTime().toString() + ";"
-                    + logRecord.getMessage() + "\n");
+                    + logRecord.getMessage());
         }
+        result.add("\n");
+        result.add("----------------------------------------------");
         return result;
     }
 
