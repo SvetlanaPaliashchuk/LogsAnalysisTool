@@ -29,6 +29,5 @@ target/*
 *.sql
 /authorization/
 /target/
-/pom.xml
 /Workspace/
 
