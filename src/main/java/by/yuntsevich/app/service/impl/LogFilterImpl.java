@@ -20,30 +20,39 @@ public class LogFilterImpl implements LogFilter {
     private DaoFactory daoFactory = DaoFactory.getInstance();
     private LogDao logDao = daoFactory.getLogDao();
     private ServiceFactory serviceFactory = ServiceFactory.getInstance();
+    private LogService service;
 
     @Override
     public List<LogRecord> getLogsByUserName(String fileName, String userName) throws ServiceException {
-        LogService service = serviceFactory.getLogService();
+        if (userName == null) {
+            throw new ServiceException("Username cannot be null");
+        }
+        service = serviceFactory.getLogService();
         List<LogRecord> logRecords = service.getLogsList(fileName).stream()
                 .filter(item -> userName.equals(item.getUserName()))
                 .collect(Collectors.toList());
         try {
             logDao.writeResultToFile(convertToResultList(logRecords));
         } catch (DaoException e) {
-            throw new ServiceException("Could not write the list of logs", e);
+            throw new ServiceException("Could not write the list of logs by username. Please check input parameters", e);
         }
         return logRecords;
-
     }
 
     @Override
     public List<LogRecord> getLogsByTimePeriod(String fileName, String startDate, String endDate) throws ServiceException {
+        LogParser lp = new LogParser();
+        LocalDateTime startPeriod = lp.parseDateTime(startDate);
+        LocalDateTime endPeriod = lp.parseDateTime(endDate);
+        if (startPeriod.isAfter(endPeriod)) {
+            throw new ServiceException("Start period should be before end period");
+        }
         List<LogRecord> logRecords;
-        LogService service = serviceFactory.getLogService();
+        service = serviceFactory.getLogService();
         try {
             logRecords = service.getLogsList(fileName)
                     .stream()
-                    .filter(line -> isIncludedInRange(line, startDate, endDate))
+                    .filter(line -> isIncludedInRange(line, startPeriod, endPeriod))
                     .collect(Collectors.toList());
             logDao.writeResultToFile(convertToResultList(logRecords));
         } catch (DaoException e) {
@@ -55,10 +64,7 @@ public class LogFilterImpl implements LogFilter {
     }
 
     //check if the date is in the specified range
-    private boolean isIncludedInRange(LogRecord logRecord, String startDate, String endDate) {
-        LogParser lp = new LogParser();
-        LocalDateTime startPeriod = lp.parseDateTime(startDate);
-        LocalDateTime endPeriod = lp.parseDateTime(endDate);
+    private boolean isIncludedInRange(LogRecord logRecord, LocalDateTime startPeriod, LocalDateTime endPeriod) {
         return ((logRecord.getDateTime().isAfter(startPeriod) && logRecord.getDateTime().isBefore(endPeriod)) ||
                 logRecord.getDateTime().equals(startPeriod) ||
                 logRecord.getDateTime().equals(endPeriod));
@@ -66,10 +72,15 @@ public class LogFilterImpl implements LogFilter {
 
     @Override
     public List<LogRecord> getLogsByMessagePattern(String fileName, String pattern) throws ServiceException {
-        LogService service = serviceFactory.getLogService();
-        List<LogRecord> logRecords = service.getLogsList(fileName).stream()
-                .filter(item -> item.getMessage().matches(pattern))
-                .collect(Collectors.toList());
+        List<LogRecord> logRecords;
+        service = serviceFactory.getLogService();
+        if (pattern == null || pattern.isEmpty()) {
+            logRecords = service.getLogsList(fileName);
+        } else {
+            logRecords = service.getLogsList(fileName).stream()
+                    .filter(item -> item.getMessage().matches(pattern))
+                    .collect(Collectors.toList());
+        }
         try {
             logDao.writeResultToFile(convertToResultList(logRecords));
         } catch (DaoException e) {
@@ -77,7 +88,6 @@ public class LogFilterImpl implements LogFilter {
         }
         return logRecords;
     }
-
 
     private List<String> convertToResultList(List<LogRecord> logRecords) {
         List<String> result = new ArrayList<>();
@@ -89,5 +99,6 @@ public class LogFilterImpl implements LogFilter {
         result.add("----------------------------------------------");
         return result;
     }
+
 
 }

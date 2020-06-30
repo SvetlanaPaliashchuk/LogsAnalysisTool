@@ -9,6 +9,7 @@ import by.yuntsevich.app.service.ServiceFactory;
 import java.util.List;
 
 public class GetAllLogs implements Command {
+    private static final String DELIMITER = ",";
     @Override
     public String execute(String request) {
         List<LogRecord> list;
@@ -16,9 +17,10 @@ public class GetAllLogs implements Command {
 
         ServiceFactory serviceFactory = ServiceFactory.getInstance();
         LogService logService = serviceFactory.getLogService();
-
+        String[] parts = request.split(DELIMITER);
+        String fileName = parts[1];
         try {
-            list = logService.getLogsList(request);
+            list = logService.getLogsList(fileName);
             response.append("List of logs:\n");
             for (LogRecord logRecord : list) {
                 response.append(logRecord);

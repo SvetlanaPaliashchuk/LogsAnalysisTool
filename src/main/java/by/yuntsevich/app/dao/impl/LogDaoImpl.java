@@ -22,7 +22,7 @@ public class LogDaoImpl implements LogDao {
             logsList = Files.lines(Paths.get(LOGS_DIRECTORY + fileName))
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new DaoException("Could not read logs from the file", e);
+            throw new DaoException("Could not read logs from the file. Please check filename", e);
         }
         return logsList;
     }
